@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 module.exports =class User extends Sequelize.Model {
-    static int(sequelize) {
+    static init(sequelize) {
         return super.init({
             email: {
                 type:Sequelize.STRING(40),
@@ -9,16 +9,17 @@ module.exports =class User extends Sequelize.Model {
                 uniqueL:true,
             },
             nick:{
-                type:Sequelize.WTRING(15),
+                type:Sequelize.STRING(15),
                 allowNull:false,
             },
             password:{
                 type:Sequelize.STRING(100),
                 allowNull:true,
             },
-            provide:{
+            provider:{
                 type:Sequelize.STRING(10),
-                allowNull:true,
+                allowNull:false,
+                defaultValue:'local',
             },
             snsId:{
                 type:Sequelize.STRING(30),
@@ -36,5 +37,18 @@ module.exports =class User extends Sequelize.Model {
         });
             
     }
-    static associate(db){}
-};
+    
+    static associate(db) {
+        db.User.hasMany(db.Post);
+        db.User.belongsToMany(db.User, {
+            foreignKey:'followingId',
+            as:'Followers',
+            through:'Follow',
+        });
+        db.User.belongsToMany(db.User, {
+            foreignKey:'followerId',
+            as:'Followings',
+            through:'Follow',
+        });
+       }
+    };
