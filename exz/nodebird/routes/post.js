@@ -21,7 +21,8 @@ const upload =multer({
             cb(null,'uploads/');
         },
         filename(req,file,cb) {
-            const ext =path.extname(file.originalname, ext) + Date.now() + ext;
+            const ext =path.extname(file.originalname);
+            cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
         },
     }),
     limits: {fileSize: 5 * 1024 * 1024},
@@ -50,8 +51,8 @@ router.post('/',isLoggedIn,upload2.none(),async(req,res,next)=>{
                     })
                 }),
             );
-            await post.addHashtags(result.map(r=> r[0]));
-        }
+             await post.addHashtags(result.map(r => r[0]));
+    }
         res.redirect('/');
     }catch(error) {
         console.error(error);
